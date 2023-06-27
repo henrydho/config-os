@@ -1,0 +1,7 @@
+#!/bin/bash
+# Initiate starship script
+# eval "$(starship init bash)"
+
+if [ -r ~/.bashrc ]; then
+  source ~/.bashrc
+fi

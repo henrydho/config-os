@@ -1,0 +1,22 @@
+#!/bin/sh
+# This script is run by the pppd after the link is established.
+# It uses run-parts to run scripts in /etc/ppp/ip-up.d, so to add routes,
+# set IP address, run the mailq etc. you should create script(s) there.
+#
+# Be aware that other packages may include /etc/ppp/ip-up.d scripts (named
+# after that package), so choose local script names with that in mind.
+#
+# This script is called with the following arguments:
+#    Arg  Name                          Example
+#    $1   Interface name                ppp0
+#    $2   The tty                       ttyS1
+#    $3   The link speed                38400
+#    $4   Local IP number               12.34.56.78
+#    $5   Peer  IP number               12.34.56.99
+#    $6   Optional ipparam value        foo
+
+if [ $6 == "VPN-Split" ]; then
+  split_routes=/etc/ppp/split_routes.csv
+  echo "$6 is connected using interface $1 at $(date)" >> /etc/ppp/peers/$6.log
+  awk -F',' '(NR>1) {print $1}' $split_routes | xargs -I {} /sbin/route add {} -interface $1
+fi
